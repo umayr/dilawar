@@ -25,7 +25,7 @@ func main() {
 			return err
 		}
 
-		fmt.Printf("%d\n", b)
+		fmt.Printf("%d PKR\n", b)
 		return nil
 	}
 
@@ -124,7 +124,7 @@ func main() {
 				}
 
 				head := []string{"ID", "Description", "Time", "Type", "Amount"}
-				foot := []string{"", "", "", "Total", humanize.Comma(int64(b))}
+				foot := []string{"", "", "", "Total", fmt.Sprintf("%s PKR", humanize.Comma(int64(b)))}
 
 				if c.Bool("csv") {
 					fmt.Println(strings.Join(head, ","))
