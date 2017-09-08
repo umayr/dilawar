@@ -2,7 +2,7 @@
 > tiny (cli based) finance manager
 
 ## Install
-```
+```bash
 # install with go get and make sure you have $GOPATH/bin in your path 
 λ go get github.com/umayr/dilawar/cmd/dilawar
 
