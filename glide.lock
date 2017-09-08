@@ -1,0 +1,20 @@
+hash: c7f9934be92d3b13a86590e96c0ee0e1f1ac7f7e21c55a28136fa86609361366
+updated: 2017-09-08T15:47:20.550004237+05:00
+imports:
+- name: github.com/boltdb/bolt
+  version: fa5367d20c994db73282594be0146ab221657943
+- name: github.com/dustin/go-humanize
+  version: 79e699ccd02f240a1f1fbbdcee7e64c1c12e41aa
+- name: github.com/mattn/go-runewidth
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
+- name: github.com/olekukonko/tablewriter
+  version: be5337e7b39e64e5f91445ce7e721888dbab7387
+- name: github.com/urfave/cli
+  version: f017f86fccc5a039a98f23311f34fdf78b014f78
+- name: golang.org/x/sys
+  version: a45f55524b7ec57890cfa6c6bc06b47f877be0d1
+  subpackages:
+  - unix
+devImports: []

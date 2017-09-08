@@ -1,0 +1,7 @@
+package: github.com/umayr/dilawar
+import:
+- package: github.com/boltdb/bolt
+- package: github.com/mitchellh/go-homedir
+- package: github.com/urfave/cli
+- package: github.com/olekukonko/tablewriter
+- package: github.com/dustin/go-humanize
