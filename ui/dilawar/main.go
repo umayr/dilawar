@@ -89,20 +89,22 @@ func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry) {
 	msg := ""
 	i, err := strconv.Atoi(amount.Text())
 	if err != nil || i < 0 {
-		msg = "An Error has occurred! Invalid integer"
+		msg = "Error! Amount should be a valid integer."
 	} else {
 		if isDebit {
 			err = dilawar.Debit(i, message.Text())
 		} else {
 			err = dilawar.Credit(i, message.Text())
 		}
+		if err != nil {
+			msg = "An error has occurred."
+		}
 	}
 
-	if err != nil && msg == "" {
-		msg = "An Error has occurred!"
+	if msg != "" {
+		showDialog(msg)
 	}
 
-	showDialog(msg)
 	message.SetText("")
 	amount.SetText("")
 }
