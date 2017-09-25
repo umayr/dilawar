@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/andlabs/ui"
 	humanize "github.com/dustin/go-humanize"
@@ -23,8 +22,6 @@ func main() {
 		credit := ui.NewButton("Credit")
 		log := ui.NewButton("View log")
 
-		response := ui.NewLabel("")
-
 		transactionGroup := ui.NewGroup("Recent Transactions:")
 
 		amountGroup.SetChild(amount)
@@ -42,9 +39,6 @@ func main() {
 		mainBox.Append(balanceLabel, false)
 		mainBox.Append(ui.NewHorizontalSeparator(), false)
 		mainBox.Append(ui.NewHorizontalSeparator(), false)
-		mainBox.Append(response, false)
-		mainBox.Append(ui.NewHorizontalSeparator(), false)
-		mainBox.Append(ui.NewHorizontalSeparator(), false)
 		mainBox.Append(amountGroup, false)
 		mainBox.Append(messageGroup, false)
 
@@ -59,17 +53,17 @@ func main() {
 		debit.OnClicked(func(*ui.Button) {
 			debit.Disable()
 			defer debit.Enable()
-			actionHandler(true, amount, message, response)
+			actionHandler(true, amount, message)
 			updateBalanceLabel(balanceLabel)
-			recentTransactions(response, transactionGroup)
+			recentTransactions(transactionGroup)
 		})
 
 		credit.OnClicked(func(*ui.Button) {
 			credit.Disable()
 			defer credit.Enable()
-			actionHandler(false, amount, message, response)
+			actionHandler(false, amount, message)
 			updateBalanceLabel(balanceLabel)
-			recentTransactions(response, transactionGroup)
+			recentTransactions(transactionGroup)
 		})
 
 		log.OnClicked(func(*ui.Button) {
@@ -82,7 +76,7 @@ func main() {
 		})
 
 		updateBalanceLabel(balanceLabel)
-		recentTransactions(response, transactionGroup)
+		recentTransactions(transactionGroup)
 		window.Show()
 	})
 
@@ -91,14 +85,7 @@ func main() {
 	}
 }
 
-func showInfoLabel(s string, response *ui.Label) {
-	response.SetText(s)
-	time.AfterFunc(5*time.Second, func() {
-		response.SetText("")
-	})
-}
-
-func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry, response *ui.Label) {
+func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry) {
 	msg := ""
 	i, err := strconv.Atoi(amount.Text())
 	if err != nil || i < 0 {
@@ -115,7 +102,7 @@ func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry, response *
 		msg = "An Error has occurred!"
 	}
 
-	showInfoLabel(msg, response)
+	showDialog(msg)
 	message.SetText("")
 	amount.SetText("")
 }
@@ -123,20 +110,20 @@ func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry, response *
 func updateBalanceLabel(balanceLabel *ui.Label) {
 	b, err := dilawar.Balance()
 	if err != nil {
-		balanceLabel.SetText(fmt.Sprintf("Error occurred while fetching balance"))
+		showDialog(fmt.Sprintf("Error occurred while fetching balance"))
 	} else {
 		balanceLabel.SetText(fmt.Sprintf("Your balance: %d", b))
 	}
 }
 
-func recentTransactions(response *ui.Label, transactionGroup *ui.Group) {
-	transactionGroup.SetChild(getTransactionLogs(true, response))
+func recentTransactions(transactionGroup *ui.Group) {
+	transactionGroup.SetChild(getTransactionLogs(true))
 }
 
-func getTransactionLogs(showLimited bool, response *ui.Label) *ui.Box {
+func getTransactionLogs(showLimited bool) *ui.Box {
 	items, err := dilawar.History()
 	if err != nil {
-		showInfoLabel(fmt.Sprintf("error: %s", err.Error()), response)
+		showDialog(fmt.Sprintf("error: %s", err.Error()))
 		return nil
 	}
 	rows := ui.NewVerticalBox()
@@ -212,7 +199,19 @@ func showCompleteHistory() {
 	stack := ui.NewVerticalBox()
 
 	stack.Append(ui.NewLabel("Transaction logs:"), false)
-	stack.Append(getTransactionLogs(false, nil), false)
+	stack.Append(getTransactionLogs(false), false)
+	window.OnClosing(func(*ui.Window) bool {
+		return true
+	})
+	window.SetChild(stack)
+	window.Show()
+}
+
+func showDialog(s string) {
+	window := ui.NewWindow("Alert", 175, 50, false)
+	stack := ui.NewVerticalBox()
+
+	stack.Append(ui.NewLabel(s), true)
 	window.OnClosing(func(*ui.Window) bool {
 		return true
 	})
