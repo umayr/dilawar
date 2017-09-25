@@ -58,7 +58,7 @@ func main() {
 			defer debit.Enable()
 			actionHandler(true, amount, message, response)
 			updateBalanceLabel(balanceLabel)
-			updateTransactionLog(response, transactionGroup)
+			recentTransactions(response, transactionGroup)
 		})
 
 		credit.OnClicked(func(*ui.Button) {
@@ -66,7 +66,7 @@ func main() {
 			defer credit.Enable()
 			actionHandler(false, amount, message, response)
 			updateBalanceLabel(balanceLabel)
-			updateTransactionLog(response, transactionGroup)
+			recentTransactions(response, transactionGroup)
 		})
 
 		log.OnClicked(func(*ui.Button) {
@@ -79,7 +79,7 @@ func main() {
 		})
 
 		updateBalanceLabel(balanceLabel)
-		updateTransactionLog(response, transactionGroup)
+		recentTransactions(response, transactionGroup)
 		window.Show()
 	})
 
@@ -120,11 +120,11 @@ func updateBalanceLabel(balanceLabel *ui.Label) {
 	}
 }
 
-func updateTransactionLog(response *ui.Label, transactionGroup *ui.Group) {
-	transactionGroup.SetChild(getTransactionLogs(response))
+func recentTransactions(response *ui.Label, transactionGroup *ui.Group) {
+	transactionGroup.SetChild(getTransactionLogs(true, response))
 }
 
-func getTransactionLogs(response *ui.Label) *ui.Box {
+func getTransactionLogs(showLimited bool, response *ui.Label) *ui.Box {
 	items, err := dilawar.History()
 	if err != nil {
 		response.SetText(fmt.Sprintf("error: %s", err.Error()))
@@ -132,7 +132,7 @@ func getTransactionLogs(response *ui.Label) *ui.Box {
 	}
 	rows := ui.NewVerticalBox()
 	numOfRecords := len(items) - 1
-	for i := numOfRecords; i > 0 && i > numOfRecords-10; i-- {
+	for i := numOfRecords; i > 0 && (i > numOfRecords-10 || !showLimited); i-- {
 		v := items[i]
 		var (
 			tm   string
