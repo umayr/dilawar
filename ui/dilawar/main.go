@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/andlabs/ui"
 	humanize "github.com/dustin/go-humanize"
@@ -40,12 +41,14 @@ func main() {
 		mainBox := ui.NewVerticalBox()
 		mainBox.Append(balanceLabel, false)
 		mainBox.Append(ui.NewHorizontalSeparator(), false)
+		mainBox.Append(ui.NewHorizontalSeparator(), false)
+		mainBox.Append(response, false)
+		mainBox.Append(ui.NewHorizontalSeparator(), false)
+		mainBox.Append(ui.NewHorizontalSeparator(), false)
 		mainBox.Append(amountGroup, false)
 		mainBox.Append(messageGroup, false)
 
 		mainBox.Append(actionBx, false)
-		mainBox.Append(ui.NewHorizontalSeparator(), false)
-		mainBox.Append(response, false)
 		mainBox.Append(ui.NewHorizontalSeparator(), false)
 		mainBox.Append(ui.NewHorizontalSeparator(), false)
 		mainBox.Append(transactionGroup, false)
@@ -88,27 +91,33 @@ func main() {
 	}
 }
 
-func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry, response *ui.Label) {
-	action := "Credit"
-	if isDebit {
-		action = "Debit"
-	}
+func showInfoLabel(s string, response *ui.Label) {
+	response.SetText(s)
+	time.AfterFunc(5*time.Second, func() {
+		response.SetText("")
+	})
+}
 
+func actionHandler(isDebit bool, amount *ui.Entry, message *ui.Entry, response *ui.Label) {
+	msg := ""
 	i, err := strconv.Atoi(amount.Text())
 	if err != nil || i < 0 {
-		response.SetText("Error occured! Invalid integer")
+		msg = "An Error has occurred! Invalid integer"
 	} else {
 		if isDebit {
 			err = dilawar.Debit(i, message.Text())
 		} else {
 			err = dilawar.Credit(i, message.Text())
 		}
-		if err != nil {
-			response.SetText("Error occured!")
-		} else {
-			response.SetText(amount.Text() + fmt.Sprintf(" %s!", action))
-		}
 	}
+
+	if err != nil && msg == "" {
+		msg = "An Error has occurred!"
+	}
+
+	showInfoLabel(msg, response)
+	message.SetText("")
+	amount.SetText("")
 }
 
 func updateBalanceLabel(balanceLabel *ui.Label) {
@@ -127,7 +136,7 @@ func recentTransactions(response *ui.Label, transactionGroup *ui.Group) {
 func getTransactionLogs(showLimited bool, response *ui.Label) *ui.Box {
 	items, err := dilawar.History()
 	if err != nil {
-		response.SetText(fmt.Sprintf("error: %s", err.Error()))
+		showInfoLabel(fmt.Sprintf("error: %s", err.Error()), response)
 		return nil
 	}
 	rows := ui.NewVerticalBox()
