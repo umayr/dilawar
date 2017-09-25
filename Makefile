@@ -1,6 +1,7 @@
 .PHONY: default deps clean fmt pretest lint lint-test list vet build test all
 SHELL := /bin/bash
 BINARY=dilawar
+UIBINARY=dilawar-ui
 
 VERSION=0.1.0
 BUILD_TIME=`date +%FT%T%z`
@@ -47,6 +48,9 @@ test: pretest vet lint-test
 
 build: clean deps test
 	@go build -x -ldflags ${LDFLAGS} -o bin/${BINARY} github.com/umayr/${BINARY}/cmd/${BINARY}
+
+build-ui: clean deps 
+	@go build -x -ldflags ${LDFLAGS} -o bin/${UIBINARY} github.com/umayr/${BINARY}/ui/${BINARY}
 
 fmt:
 	@gofmt -w $$(find . -type f -name '*.go' -not -path "./vendor/*")
