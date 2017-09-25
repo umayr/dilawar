@@ -14,7 +14,7 @@ func main() {
 	err := ui.Main(func() {
 		amountGroup := ui.NewGroup("Amount")
 		messageGroup := ui.NewGroup("Message")
-		balanceLabel := ui.NewLabel("Your balances: 0")
+		balanceLabel := ui.NewLabel("Your balance: 0")
 		amount := ui.NewEntry()
 		message := ui.NewEntry()
 
@@ -70,7 +70,7 @@ func main() {
 		})
 
 		log.OnClicked(func(*ui.Button) {
-			response.SetText("work in progress")
+			showCompleteHistory()
 		})
 
 		window.OnClosing(func(*ui.Window) bool {
@@ -152,7 +152,12 @@ func getTransactionLogs(showLimited bool, response *ui.Label) *ui.Box {
 			desc = "N/A"
 		} else {
 			desc = v.Description
-			desc = splitSubN(desc, 127)
+			if showLimited {
+				desc = splitSubN(desc, 25)
+			} else {
+				desc = splitSubN(desc, 127)
+			}
+
 		}
 		amt = fmt.Sprintf("%s %s", humanize.Comma(int64(v.Amount)), "PKR")
 
@@ -191,4 +196,17 @@ func splitSubN(s string, n int) string {
 		return subs[0] + "..."
 	}
 	return subs[0]
+}
+
+func showCompleteHistory() {
+	window := ui.NewWindow("History", 150, 150, false)
+	stack := ui.NewVerticalBox()
+
+	stack.Append(ui.NewLabel("Transaction logs:"), false)
+	stack.Append(getTransactionLogs(false, nil), false)
+	window.OnClosing(func(*ui.Window) bool {
+		return true
+	})
+	window.SetChild(stack)
+	window.Show()
 }
