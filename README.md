@@ -7,11 +7,13 @@
 λ go get github.com/umayr/dilawar/cmd/dilawar
 
 # make with source
-λ git clone github.com/umayr/dilawar
+λ git clone https://github.com/umayr/dilawar
+λ cd dilawar
 λ make build
 
 # create cross platform binaries
-λ git clone github.com/umayr/dilawar
+λ git clone https://github.com/umayr/dilawar
+λ cd dilawar
 λ make cross
 ```
 or you can download the pre-compiled version of binaries from [here](https://github.com/umayr/dilawar/releases/tag/0.1.0).
