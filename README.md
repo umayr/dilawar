@@ -16,7 +16,7 @@
 λ cd dilawar
 λ make cross
 ```
-or you can download the pre-compiled version of binaries from [here](https://github.com/umayr/dilawar/releases/tag/0.1.0).
+or you can download the pre-compiled version of binaries from [here](https://github.com/umayr/dilawar/releases/tag/0.1.0). Moreover, If you're using Windows, just run the file `install.bat` as an administrator, and it'll download and install the pre-compiled version to your system on one click.
 
 ## Usage
 
